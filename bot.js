@@ -55,10 +55,12 @@ factory.on('PairCreated', async (token0, token1, pairAddress) => {
 
   //We buy for 0.015 WBNB of the new token
   const amountIn = ethers.utils.parseUnits('0.015', 'ether');
+try {
   const amounts = await router.getAmountsOut(amountIn, [tokenIn, tokenOut]);
+
   //Our execution price will be a bit different, we need some flexbility
   const amountOutMin = amounts[1].sub(amounts[1].div(10));
-  try {
+
     console.log(Date() + `    Buying new token
     =================
     tokenIn: ${amountIn.toString()} ${tokenIn} (WBNB)
