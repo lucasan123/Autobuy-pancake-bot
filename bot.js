@@ -16,7 +16,7 @@ const factory = new ethers.Contract(
   addresses.factory,
   ['event PairCreated(address indexed token0, address indexed token1, address pair, uint)'],
   account
-);
+);  
 const router = new ethers.Contract(
   addresses.router,
   [
@@ -25,9 +25,24 @@ const router = new ethers.Contract(
   ],
   account
 );
+
+function myWriteFile(file, content) {
+  fs.appendFile(file, content, function (err) {
+    if (err) return console.log(err) ;
+  });
+} ;
+
 console.log(Date() + '    BOT STARTED');
 
 factory.on('PairCreated', async (token0, token1, pairAddress) => {
+
+var content = (Date() + `    New pair detected </br>
+    ================= </br>
+    token0: <a href="https://bscscan.com/address/${token0}">https://bscscan.com/address/${token0}</a> </br>
+    token1: <a href="https://bscscan.com/address/${token1}">https://bscscan.com/address/${token1}</a></br>
+    pairAddress: <a href="https://bscscan.com/address/${pairAddress}">https://bscscan.com/address/${pairAddress}</a> </br>
+  `) ;
+  myWriteFile(file, content) ;
   console.log(Date() + `    New pair detected
 
     =================
@@ -56,7 +71,7 @@ factory.on('PairCreated', async (token0, token1, pairAddress) => {
   //We buy for 0.015 WBNB of the new token
   const amountIn = ethers.utils.parseUnits('0.015', 'ether');
 try {
-  const amounts = await router.getAmountsOut(amountIn, [tokenIn, tokenOut]);
+  const amounts = await router.getAmountsOut(amountIn, [tokenIn, tokenOut]); 
 
   //Our execution price will be a bit different, we need some flexbility
   const amountOutMin = amounts[1].sub(amounts[1].div(10));
