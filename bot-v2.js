@@ -1,11 +1,11 @@
 const ethers = require('ethers');
-var file="onlylog.html" ;
+var file="onlylogv2.html" ;
 var fs = require("fs") ;
 
 const addresses = {
   WBNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
-  factory: '0xBCfCcbde45cE874adCB698cC183deBcF17952812',
-  router: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'
+  factory: '0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73',
+  router: '0x10ED43C718714eb63d5aA57B78B54704E256024E'
 }
 
 const provider = new ethers.providers.WebSocketProvider('wss://bsc-ws-node.nariox.org:443');
