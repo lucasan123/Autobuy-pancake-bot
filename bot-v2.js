@@ -10,7 +10,8 @@ const addresses = {
 }
 
 const mnemonic = 'your private keys here';
-const provider = new ethers.providers.JsonRpcProvider('https://bsc-dataseed1.binance.org/');
+const ethnode = 'https://bsc-dataseed1.binance.org/'
+const provider = new ethers.providers.JsonRpcProvider(ethnode);
 const wallet = new ethers.Wallet(mnemonic);
 const account = wallet.connect(provider);
 const factory = new ethers.Contract(
@@ -33,35 +34,39 @@ function myWriteFile(file, content) {
   });
 } ;
 
-console.log(Date() + '    BOT STARTED');
-
+console.log(Date() + '  V2 BOT STARTED');
+if(!provider.ready){
+  throw new Error('unable to connect to ethereum node at ' + ethnode);
+}else{
+  console.log('connected to ethereum node at ' + ethnode);
+}
 factory.on('PairCreated', async (token0, token1, pairAddress) => {
 
     //The quote currency needs to be WBNB (we will pay with WBNB)
     let tokenIn, tokenOut, tokenTOBUY;
-    if(token0 == addresses.WBNB) {
-      tokenIn = token0;
-      tokenOut = token1;
-    }
+  if(token0 == addresses.WBNB) {
+        tokenIn = token0;
+        tokenOut = token1;
+        }
 
-    if(token1 == addresses.WBNB) {
-      tokenIn = token1;
-      tokenOut = token0;
-    }
+ if(token1 == addresses.WBNB) {
+          tokenIn = token1;
+          tokenOut = token0;
+        }
 
-    if(token0 == addresses.target) {
-      tokenTOBUY = token0;
-      console.log('Targeted token found!'); 
-    }
+if(token0 == addresses.targeted) {
+          tokenTOBUY = token0;
+          console.log('Targeted token found!');
+        }
 
-    if(token1 == addresses.target) {
-      tokenTOBUY = token1;
-      console.log('Targeted token found!'); 
-    }
-    //The quote currency is not WBNB
-    if(typeof tokenIn === 'undefined') {
-      return;
-    }
+if(token1 == addresses.targeted) {
+          tokenTOBUY = token1;
+          console.log('Targeted token found!');
+        }
+        //The quote currency is not WBNB
+   else    if(typeof tokenIn === 'undefined') {
+          return;
+        }
 
 var content = (Date() + `    New pair detected </br>
     ================= </br>
@@ -69,12 +74,15 @@ var content = (Date() + `    New pair detected </br>
     tokenin: <a href="https://bscscan.com/address/${tokenOut}">https://bscscan.com/address/${tokenOut}</a> </br>
     pairAddress: <a href="https://bscscan.com/address/${pairAddress}">https://bscscan.com/address/${pairAddress}</a> </br>
   `) ;
-if (tokenTOBUY) {
+if (typeof tokenTOBUY === 'undefined') {
+console.log('Token not found');
+} else {
 content= (content + `
 FOUND TARGETED TOKEN ADDED PAIR  !!!!!!!!!!!!!!!!!!!!! BUYING NOW !!
 `);
 }
   myWriteFile(file, content) ;
+
   console.log(Date() + `    New pair detected
 
     =================
@@ -82,13 +90,13 @@ FOUND TARGETED TOKEN ADDED PAIR  !!!!!!!!!!!!!!!!!!!!! BUYING NOW !!
     tokenOut: ${tokenOut}
     pairAddress: ${pairAddress}
   `);
-
-
-
+if (tokenTOBUY) {
+console.log('FOUND TARGETED TOKEN ADDED PAIR  !!!!!!!!!!!!!!!!!!!!! BUYING NOW !! ');
+}
 
 if (tokenTOBUY) {
 try {
-  //We buy for 0.015 WBNB of the new token
+  //We buy for 0.005 WBNB of the new token
   const amountIn = ethers.utils.parseUnits('0.005', 'ether');
   const amounts = await router.getAmountsOut(amountIn, [tokenIn, tokenOut]);
   //Our execution price will be a bit different, we need some flexbility
