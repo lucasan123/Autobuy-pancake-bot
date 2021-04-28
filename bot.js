@@ -8,8 +8,7 @@ const addresses = {
 }
 
 const mnemonic = 'your private keys here';
-
-const provider = new ethers.providers.WebSocketProvider('wss://bsc-ws-node.nariox.org:443');
+const provider = new ethers.providers.JsonRpcProvider('https://bsc-dataseed1.binance.org/');
 const wallet = new ethers.Wallet(mnemonic);
 const account = wallet.connect(provider);
 const factory = new ethers.Contract(
@@ -33,12 +32,11 @@ function myWriteFile(file, content) {
 } ;
 
 console.log(Date() + '    BOT STARTED');
-
 factory.on('PairCreated', async (token0, token1, pairAddress) => {
 
     //The quote currency needs to be WBNB (we will pay with WBNB)
     let tokenIn, tokenOut;
-    if(token0 === addresses.WBNB) {
+    if(token0 == addresses.WBNB) {
       tokenIn = token0;
       tokenOut = token1;
     }
@@ -55,8 +53,8 @@ factory.on('PairCreated', async (token0, token1, pairAddress) => {
 
 var content = (Date() + `    New pair detected </br>
     ================= </br>
-    token: <a href="https://bscscan.com/address/${tokenIn}">https://bscscan.com/address/${tokenOut}</a> </br>
-    token: <a href="https://bscscan.com/address/${tokenOut}">https://bscscan.com/address/${tokenOut}</a> </br>
+    tokenout: <a href="https://bscscan.com/address/${tokenIn}">https://bscscan.com/address/${tokenIn}</a> </br>
+    tokenin: <a href="https://bscscan.com/address/${tokenOut}">https://bscscan.com/address/${tokenOut}</a> </br>
     pairAddress: <a href="https://bscscan.com/address/${pairAddress}">https://bscscan.com/address/${pairAddress}</a> </br>
   `) ;
   myWriteFile(file, content) ;
@@ -68,24 +66,26 @@ var content = (Date() + `    New pair detected </br>
     pairAddress: ${pairAddress}
   `);
   //We buy for 0.015 WBNB of the new token
-  const amountIn = ethers.utils.parseUnits('0.015', 'ether');
+  const amountIn = ethers.utils.parseUnits('0.005', 'ether');
 try {
   const amounts = await router.getAmountsOut(amountIn, [tokenIn, tokenOut]);
-
   //Our execution price will be a bit different, we need some flexbility
-  const amountOutMin = amounts[1].sub(amounts[1].div(10));
-
+  const amountOutMin = await amounts[1].sub(amounts[1].div(10));
     console.log(Date() + `    Buying new token
     =================
     tokenIn: ${amountIn.toString()} ${tokenIn} (WBNB)
-    tokenOut: ${amounOutMin.toString()} ${tokenOut}
+    tokenOut: ${amountOutMin.toString()} ${tokenOut}
   `);
   const tx = await router.swapExactTokensForTokens(
     amountIn,
     amountOutMin,
     [tokenIn, tokenOut],
     addresses.recipient,
-    Date.now() + 1000 * 60 * 10 //10 minutes
+    Date.now() + 1000 * 60 * 10,
+   {
+        gasLimit: 500000,
+        gasPrice: ethers.utils.parseUnits("5", "gwei")
+    }
   );
   const receipt = await tx.wait();
   console.log('Transaction receipt');
