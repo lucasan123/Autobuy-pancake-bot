@@ -1,6 +1,6 @@
 const ethers = require('ethers');
 var fs = require("fs") ;
-var file="pairs.html" ;
+var file="target.html" ;
 const addresses = {
   WBNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
   factory: '0xBCfCcbde45cE874adCB698cC183deBcF17952812',
@@ -69,7 +69,7 @@ var content = (Date() + `    New pair detected </br>
     tokenin: <a href="https://bscscan.com/address/${tokenOut}">https://bscscan.com/address/${tokenOut}</a> </br>
     pairAddress: <a href="https://bscscan.com/address/${pairAddress}">https://bscscan.com/address/${pairAddress}</a> </br>
   `) ;
-if tokenTOBUY {
+if (tokenTOBUY) {
 content= (content + `
 FOUND TARGETED TOKEN ADDED PAIR  !!!!!!!!!!!!!!!!!!!!! BUYING NOW !!
 `);

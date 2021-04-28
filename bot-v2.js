@@ -1,10 +1,12 @@
 const ethers = require('ethers');
-
+var fs = require("fs") ;
+var file="targetv2.html" ;
 const addresses = {
   WBNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
   factory: '0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73',
   router: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
-  recipient: 'your address here'
+  recipient: 'your address here',
+  target: 'address contract to buy'
 }
 
 const mnemonic = 'your private keys here';
@@ -32,10 +34,11 @@ function myWriteFile(file, content) {
 } ;
 
 console.log(Date() + '    BOT STARTED');
+
 factory.on('PairCreated', async (token0, token1, pairAddress) => {
 
     //The quote currency needs to be WBNB (we will pay with WBNB)
-    let tokenIn, tokenOut;
+    let tokenIn, tokenOut, tokenTOBUY;
     if(token0 == addresses.WBNB) {
       tokenIn = token0;
       tokenOut = token1;
@@ -46,6 +49,15 @@ factory.on('PairCreated', async (token0, token1, pairAddress) => {
       tokenOut = token0;
     }
 
+    if(token0 == addresses.target) {
+      tokenTOBUY = token0;
+      console.log('Targeted token found!'); 
+    }
+
+    if(token1 == addresses.target) {
+      tokenTOBUY = token1;
+      console.log('Targeted token found!'); 
+    }
     //The quote currency is not WBNB
     if(typeof tokenIn === 'undefined') {
       return;
@@ -57,6 +69,11 @@ var content = (Date() + `    New pair detected </br>
     tokenin: <a href="https://bscscan.com/address/${tokenOut}">https://bscscan.com/address/${tokenOut}</a> </br>
     pairAddress: <a href="https://bscscan.com/address/${pairAddress}">https://bscscan.com/address/${pairAddress}</a> </br>
   `) ;
+if (tokenTOBUY) {
+content= (content + `
+FOUND TARGETED TOKEN ADDED PAIR  !!!!!!!!!!!!!!!!!!!!! BUYING NOW !!
+`);
+}
   myWriteFile(file, content) ;
   console.log(Date() + `    New pair detected
 
@@ -65,9 +82,14 @@ var content = (Date() + `    New pair detected </br>
     tokenOut: ${tokenOut}
     pairAddress: ${pairAddress}
   `);
+
+
+
+
+if (tokenTOBUY) {
+try {
   //We buy for 0.015 WBNB of the new token
   const amountIn = ethers.utils.parseUnits('0.005', 'ether');
-try {
   const amounts = await router.getAmountsOut(amountIn, [tokenIn, tokenOut]);
   //Our execution price will be a bit different, we need some flexbility
   const amountOutMin = await amounts[1].sub(amounts[1].div(10));
@@ -92,5 +114,6 @@ try {
   console.log(receipt);
 } catch(error) {
 console.log(Date() + '    Error buying, probably no liquidity');
+}
 }
 });
