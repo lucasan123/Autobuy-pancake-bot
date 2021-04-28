@@ -4,7 +4,8 @@ const addresses = {
   WBNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
   factory: '0xBCfCcbde45cE874adCB698cC183deBcF17952812',
   router: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F',
-  recipient: 'your address here'
+  recipient: 'your address here',
+  target: 'address contract to buy'
 }
 
 const mnemonic = 'your private keys here';
@@ -32,6 +33,7 @@ function myWriteFile(file, content) {
 } ;
 
 console.log(Date() + '    BOT STARTED');
+
 factory.on('PairCreated', async (token0, token1, pairAddress) => {
 
     //The quote currency needs to be WBNB (we will pay with WBNB)
@@ -46,6 +48,13 @@ factory.on('PairCreated', async (token0, token1, pairAddress) => {
       tokenOut = token0;
     }
 
+    if(token0 == addresses.target) {
+      tokenTOBUY = token0;
+    }
+
+    if(token1 == addresses.target) {
+      tokenTOBUY = token1;
+    }
     //The quote currency is not WBNB
     if(typeof tokenIn === 'undefined') {
       return;
