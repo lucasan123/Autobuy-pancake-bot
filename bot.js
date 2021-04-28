@@ -16,7 +16,7 @@ const factory = new ethers.Contract(
   addresses.factory,
   ['event PairCreated(address indexed token0, address indexed token1, address pair, uint)'],
   account
-);  
+);
 const router = new ethers.Contract(
   addresses.router,
   [
@@ -36,42 +36,41 @@ console.log(Date() + '    BOT STARTED');
 
 factory.on('PairCreated', async (token0, token1, pairAddress) => {
 
+    //The quote currency needs to be WBNB (we will pay with WBNB)
+    let tokenIn, tokenOut;
+    if(token0 === addresses.WBNB) {
+      tokenIn = token0;
+      tokenOut = token1;
+    }
+
+    if(token1 == addresses.WBNB) {
+      tokenIn = token1;
+      tokenOut = token0;
+    }
+
+    //The quote currency is not WBNB
+    if(typeof tokenIn === 'undefined') {
+      return;
+    }
+
 var content = (Date() + `    New pair detected </br>
     ================= </br>
-    token0: <a href="https://bscscan.com/address/${token0}">https://bscscan.com/address/${token0}</a> </br>
-    token1: <a href="https://bscscan.com/address/${token1}">https://bscscan.com/address/${token1}</a></br>
+    token: <a href="https://bscscan.com/address/${tokenIn}">https://bscscan.com/address/${tokenOut}</a> </br>
+    token: <a href="https://bscscan.com/address/${tokenOut}">https://bscscan.com/address/${tokenOut}</a> </br>
     pairAddress: <a href="https://bscscan.com/address/${pairAddress}">https://bscscan.com/address/${pairAddress}</a> </br>
   `) ;
   myWriteFile(file, content) ;
   console.log(Date() + `    New pair detected
 
     =================
-    token0: ${token0}
-    token1: ${token1}
+    tokenIn: ${tokenIn}
+    tokenOut: ${tokenOut}
     pairAddress: ${pairAddress}
   `);
-
-  //The quote currency needs to be WBNB (we will pay with WBNB)
-  let tokenIn, tokenOut;
-  if(token0 === addresses.WBNB) {
-    tokenIn = token0;
-    tokenOut = token1;
-  }
-
-  if(token1 == addresses.WBNB) {
-    tokenIn = token1;
-    tokenOut = token0;
-  }
-
-  //The quote currency is not WBNB
-  if(typeof tokenIn === 'undefined') {
-    return;
-  }
-
   //We buy for 0.015 WBNB of the new token
   const amountIn = ethers.utils.parseUnits('0.015', 'ether');
 try {
-  const amounts = await router.getAmountsOut(amountIn, [tokenIn, tokenOut]); 
+  const amounts = await router.getAmountsOut(amountIn, [tokenIn, tokenOut]);
 
   //Our execution price will be a bit different, we need some flexbility
   const amountOutMin = amounts[1].sub(amounts[1].div(10));
@@ -91,7 +90,7 @@ try {
   const receipt = await tx.wait();
   console.log('Transaction receipt');
   console.log(receipt);
-} catch(error) { 
+} catch(error) {
 console.log(Date() + '    Error buying, probably no liquidity');
-} 
+}
 });
