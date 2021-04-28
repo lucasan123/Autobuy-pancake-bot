@@ -1,5 +1,7 @@
 const ethers = require('ethers');
 var file="pairs2.html" ;
+var fs = require("fs") ;
+
 const addresses = {
   WBNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
   factory: '0xBCfCcbde45cE874adCB698cC183deBcF17952812',
