@@ -78,11 +78,11 @@ if (typeof tokenTOBUY === 'undefined') {
 console.log('Token not found');
 } else {
 content= (content + `
-FOUND TARGETED TOKEN ADDED PAIR  !!!!!!!!!!!!!!!!!!!!! BUYING NOW !!
+FOUND TARGETED TOKEN  !!!!!!!!!!!!!!!!!!!!! BUYING NOW !!
 `);
 }
   myWriteFile(file, content) ;
-
+  console.log('searching... ' + addresses.targeted);
   console.log(Date() + `    New pair detected
 
     =================
@@ -91,13 +91,13 @@ FOUND TARGETED TOKEN ADDED PAIR  !!!!!!!!!!!!!!!!!!!!! BUYING NOW !!
     pairAddress: ${pairAddress}
   `);
 if (tokenTOBUY) {
-console.log('FOUND TARGETED TOKEN ADDED PAIR  !!!!!!!!!!!!!!!!!!!!! BUYING NOW !! ');
+console.log('FOUND TARGETED TOKEN   !!!!!!!!!!!!!!!!!!!!! BUYING NOW !! ');
 }
 
 if (tokenTOBUY) {
 try {
-  //We buy for 0.005 WBNB of the new token
-  const amountIn = ethers.utils.parseUnits('0.005', 'ether');
+  //We buy for 0.015 WBNB of the new token
+  const amountIn = ethers.utils.parseUnits('0.015', 'ether');
   const amounts = await router.getAmountsOut(amountIn, [tokenIn, tokenOut]);
   //Our execution price will be a bit different, we need some flexbility
   const amountOutMin = await amounts[1].sub(amounts[1].div(10));
