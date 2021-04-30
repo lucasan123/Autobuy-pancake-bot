@@ -6,7 +6,7 @@ const addresses = {
   factory: '0xBCfCcbde45cE874adCB698cC183deBcF17952812',
   router: '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F',
   recipient: 'your address here',
-  target: 'address contract to buy'
+  targeted: 'address contract to buy'
 }
 
 const mnemonic = 'your private keys here';
