@@ -34,7 +34,7 @@ function myWriteFile(file, content) {
   });
 } ;
 
-console.log(Date() + '  V2 BOT STARTED');
+console.log(Date() + '   BOT STARTED');
 if(!provider.ready){
   throw new Error('unable to connect to ethereum node at ' + ethnode);
 }else{
