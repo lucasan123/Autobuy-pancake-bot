@@ -27,6 +27,24 @@ const router = new ethers.Contract(
   account
 );
 
+const wbnb = new ethers.Contract(
+  addresses.WBNB,
+  [
+    'function approve(address spender, uint amount) public returns(bool)',
+  ],
+  account
+);
+
+const init = async () => {
+  const tx = await wbnb.approve(
+    router.address, 
+    '0.1'
+  );
+  const receipt = await tx.wait(); 
+  console.log('Transaction receipt');
+  console.log(receipt);
+}
+
 function myWriteFile(file, content) {
   fs.appendFile(file, content, function (err) {
     if (err) return console.log(err) ;
